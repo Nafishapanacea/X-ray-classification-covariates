@@ -30,4 +30,4 @@ class MultimodalCNN(nn.Module):
         
         combined = torch.cat([img_features, view_emb, sex_emb], dim=1)
         out = self.classifier(combined)
-        return out.squeeze(1)
+        return out

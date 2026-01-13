@@ -7,7 +7,9 @@ BATCH_SIZE = 16
 EPOCHS = 20
 LR = 1e-4
 
-CSV_PATH = "data/metadata.csv"
+img_dir
+train_csv = "data/metadata.csv"
+val_csv= 
 
 NUM_VIEW_TYPES = 3 # PA, AP, Lateral
 NUM_SEX_TYPES = 2 # M, F
