@@ -5,6 +5,8 @@ from torch import nn, optim
 from dataset.cxr_dataset import CXRMulitmodalDataset
 from models.multimodal_cnn import MultimodalCNN
 from config import *
+from utils.transforms import get_train_transform, get_val_transform
+from utils.utils import train_one_epoch, validate
 
 def train():
     train_dataset = CXRMulitmodalDataset(train_csv, img_dir, transform=get_train_transform())
@@ -14,6 +16,7 @@ def train():
     val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False, num_workers=4)
     
     model = MultimodalCNN().to(DEVICE)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
     best_val_acc = 0.0  # to store best accuracy

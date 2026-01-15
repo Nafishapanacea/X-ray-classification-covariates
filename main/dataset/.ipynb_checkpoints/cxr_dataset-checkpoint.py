@@ -4,14 +4,14 @@ import torch
 from torch.utils.data import Dataset
 from PIL import Image
 
-from utils.transforms import get_transforms
+# from utils.transforms import get_train_transform
 from utils.encoders import encode_view, encode_sex
 
 class CXRMulitmodalDataset(Dataset):
     def __init__(self, csv_path, img_dir, transform=None):
         self.df = pd.read_csv(csv_path)
         self.img_dir = img_dir
-        self.transforms = get_transforms()
+        self.transforms = transform
     
     def __len__(self):
         return len(self.df)
@@ -21,9 +21,11 @@ class CXRMulitmodalDataset(Dataset):
         image_id = row["image_id"]
         img_path = os.path.join(self.img_dir, image_id)
         image = Image.open(img_path).convert("RGB")
-        image = self.transforms(image)
+
+        if self.transforms:
+            image = self.transforms(image)
         
-        view = encode_view(row['frontal/lateral'], row['AP/PA'])
+        view = encode_view(row['orientation'])
         sex = encode_sex(row['sex'])
         
         view = torch.tensor(view, dtype=torch.long)

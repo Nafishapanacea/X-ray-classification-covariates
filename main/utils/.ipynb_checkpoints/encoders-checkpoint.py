@@ -1,10 +1,10 @@
 import torch
 
-def encode_view(frontal_lateral, ap_pa):
+def encode_view(orientation):
     # 0: PA, 1: AP, 2: Lateral
-    if frontal_lateral == "lateral":
+    if orientation == "lateral":
         return 2
-    if ap_pa == "PA":
+    if orientation == "PA":
         return 0
     return 1
 

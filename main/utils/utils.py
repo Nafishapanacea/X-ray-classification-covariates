@@ -37,7 +37,7 @@ def validate(model, val_loader, criterion, DEVICE):
             image = image.to(DEVICE)
             view = view.to(DEVICE)
             sex = sex.to(DEVICE)
-            label = label.to(DEVICE)
+            label = label.unsqueeze(1).to(DEVICE)
             
             outputs = model(image, view, sex)   
             loss = criterion(outputs, label)
