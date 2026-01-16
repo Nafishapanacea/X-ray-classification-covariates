@@ -3,13 +3,15 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
-from dataset import XRayDataset
-from transforms import get_val_transform
 from dataset.cxr_dataset import CXRMulitmodalDataset
+from models.multimodal_cnn import MultimodalCNN
+# from config import *
+from utils.transforms import get_train_transform, get_val_transform
+
 
 
 def load_model(checkpoint_path, device):
-    model = model = MultimodalCNN()
+    model = MultimodalCNN()
     model.load_state_dict(torch.load(checkpoint_path, map_location=device))
     model.to(device)
     model.eval()
@@ -25,7 +27,9 @@ def predict():
     # device= "cpu"
 
     # Load trained model
-    checkpoint_path= '/home/jupyter-nafisha/X-ray/checkpoints/best_model_vinBig.pth'
+    checkpoint_path= '/home/jupyter-nafisha/X-ray-covariates/main/best_model.pth'
+    # checkpoint_path= '/home/jupyter-nafisha/X-ray-covariates/main/last_model.pth'
+    
     model = load_model(checkpoint_path, device)
 
     # Dataset & dataloader
@@ -33,17 +37,21 @@ def predict():
     test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False, num_workers=4)
 
     # Ground-truth labels (Normal=0, Abnormal=1)
-    true_labels = test_dataset.df["label"].tolist()
+    true_labels = test_dataset.df["label"].map({"Normal": 0, "Abnormal": 1}).tolist()
     image_names = test_dataset.df["image_id"].tolist()
 
     predictions = []
 
     with torch.no_grad():
-        for images, _ in test_loader:  
+        for images, view, sex, label in test_loader:  
             images = images.to(device)
+            view = view.to(device)
+            sex = sex.to(device)
+            label = label.to(device)
 
-            logits = model(images)             # shape: (B, 1)
+            logits = model(images, view, sex)             # shape: (B, 1)
             probs = torch.sigmoid(logits).squeeze(1)  # shape: (B,)
+            # probs = torch.sigmoid(logits)
 
             preds = (probs >= 0.5).long()      # thresholding for binary prediction
 
@@ -80,5 +88,5 @@ def predict():
     print(cm)
 
 
-if __name__ == "__main__":
-    predict()
+# if __name__ == "__main__":
+#     predict()
