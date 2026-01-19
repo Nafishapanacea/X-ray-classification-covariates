@@ -20,8 +20,12 @@ def load_model(checkpoint_path, device):
 
 def predict():
 
-    test_csv = '/home/jupyter-nafisha/X-ray-covariates/CSVs/test.csv'
-    img_dir = '/home/common/data_v3'
+    # test_csv = '/home/jupyter-nafisha/X-ray-covariates/CSVs/test.csv'
+    # img_dir = '/home/common/data_v3'
+
+    # padchest testing
+    test_csv = '/home/jupyter-nafisha/X-ray-covariates/CSVs/PADCHEST_selected_with_reports.csv'
+    img_dir = '/home/jupyter-nafisha/X-ray-covariates/padchest_normalized'
     
     device = "cuda" if torch.cuda.is_available() else "cpu"
     # device= "cpu"
